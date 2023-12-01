@@ -1,0 +1,25 @@
+.main-page {
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+  grid-template-rows: 1fr;
+
+  max-width: 1000px;
+  margin: 0 auto;
+
+  height: 100vh;
+  overflow: hidden;
+
+  > * {
+    padding-top: 30px;
+    padding-inline: 20px;
+    border-right: 1px solid hsl(200, 50%, 90%);
+  }
+
+  > :last-child {
+    border-right: none;
+  }
+
+  > :nth-child(2) {
+    overflow-y: scroll;
+  }
+}
