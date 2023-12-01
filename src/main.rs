@@ -2,7 +2,8 @@ mod components;
 mod maud_custom;
 mod page;
 
-use components::{login_form, sign_up_form, toast};
+use components::{login_form, sign_up_form, toast, FeedProps};
+use itertools::Itertools;
 use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
 use shuttle_persist::PersistInstance;
@@ -52,7 +53,7 @@ async fn toki_lili_post(app_state: &State<AppState>, lili_form: Form<LiliForm>) 
         id: "1".to_string(),
         text: lili_form.text.clone(),
         username: "jan+telo".to_string(),
-        timestamp: 1701008545,
+        timestamp: chrono::Utc::now().timestamp(),
     };
 
     app_state
@@ -60,18 +61,10 @@ async fn toki_lili_post(app_state: &State<AppState>, lili_form: Form<LiliForm>) 
         .save::<Lili>(format!("lili_{}", id.clone()).as_str(), new_lili.clone())
         .unwrap();
 
-    let some_profile = Profile {
-        username: "jan+sona".to_string(),
-        name: "jan sona".to_string(),
-        avatar: format!(
-            "https://api.dicebear.com/7.x/big-smile/svg?seed={}",
-            "jan sona"
-        ),
-        bio: "mi wile moku e kili e telo e pan".to_string(),
-        website: "https://jan.sona".to_string(),
-        location: "ma+ali".to_string(),
-        birthday: "2000-01-01".to_string(),
-    };
+    let some_profile = app_state
+        .persist
+        .load::<Profile>("profile_jan+sona")
+        .unwrap();
 
     MaudTemplate {
         string: lili(new_lili, some_profile),
@@ -83,14 +76,37 @@ async fn toki_lili_post(app_state: &State<AppState>, lili_form: Form<LiliForm>) 
 }
 
 #[get("/")]
-fn hello() -> MaudTemplate {
+fn hello(state: &State<AppState>) -> MaudTemplate {
+    let some_profile = state.persist.load::<Profile>("profile_jan+sona").unwrap();
+
+    let lilis = state
+        .persist
+        .list()
+        .unwrap()
+        .iter()
+        .filter(|key| key.starts_with("lili_"))
+        .map(|key| state.persist.load::<Lili>(key).unwrap())
+        .collect::<Vec<Lili>>();
+
+    let lilis: Vec<Lili> = lilis
+        .into_iter()
+        .sorted_by(|a, b| b.timestamp.cmp(&a.timestamp))
+        .collect();
+
+    let feed_props = FeedProps {
+        lilis: lilis
+            .iter()
+            .map(|c| (c.to_owned(), some_profile.clone()))
+            .collect(),
+    };
+
     page(
         html! {
             div class="main-page" {
                 (nav())
                 div {
                     (toki_lili())
-                    (feed())
+                    (feed(feed_props))
                 }
                 (trending())
             }
@@ -100,25 +116,33 @@ fn hello() -> MaudTemplate {
 }
 
 #[get("/profile")]
-fn profile_page() -> MaudTemplate {
-    let some_profile = Profile {
-        username: "jan+sona".to_string(),
-        name: "jan sona".to_string(),
-        avatar: format!(
-            "https://api.dicebear.com/7.x/big-smile/svg?seed={}",
-            "jan sona"
-        ),
-        bio: "mi wile moku e kili e telo e pan".to_string(),
-        website: "https://jan.sona".to_string(),
-        location: "ma+ali".to_string(),
-        birthday: "2000-01-01".to_string(),
+fn profile_page(state: &State<AppState>) -> MaudTemplate {
+    let some_profile = state.persist.load::<Profile>("profile_jan+sona").unwrap();
+
+    let lilis = state
+        .persist
+        .list()
+        .unwrap()
+        .iter()
+        .filter(|key| key.starts_with("lili_"))
+        .map(|key| state.persist.load::<Lili>(key).unwrap())
+        .sorted_by(|a, b| b.timestamp.cmp(&a.timestamp))
+        .collect::<Vec<Lili>>();
+
+    let feed_props = FeedProps {
+        lilis: lilis
+            .iter()
+            .map(|c| (c.to_owned(), some_profile.clone()))
+            .collect(),
     };
+
     page(
         html! {
             div class="main-page" {
                 (nav())
                 div {
                     (profile(some_profile.clone()))
+                    (feed(feed_props))
                 }
                 div {}
             }
@@ -156,6 +180,25 @@ async fn signup_post(state: &State<AppState>, text: Form<Signup>) -> MaudTemplat
             User {
                 username: text.username.clone(),
                 password_hash: password_hash.to_string(),
+            },
+        )
+        .unwrap();
+
+    state
+        .persist
+        .save::<Profile>(
+            format!("profile_{}", "jan+sona").as_str(),
+            Profile {
+                username: text.username.clone(),
+                name: text.username.clone(),
+                avatar: format!(
+                    "https://api.dicebear.com/7.x/big-smile/svg?seed={}",
+                    text.username.clone()
+                ),
+                bio: "".to_string(),
+                website: "".to_string(),
+                location: "".to_string(),
+                birthday: "".to_string(),
             },
         )
         .unwrap();

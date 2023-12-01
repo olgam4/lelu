@@ -1,4 +1,5 @@
 use maud::{html, Markup};
+use serde::{Deserialize, Serialize};
 
 use crate::Lili;
 
@@ -172,51 +173,23 @@ pub fn trending() -> Markup {
     }
 }
 
-pub fn feed() -> Markup {
-    let fake_lilis = vec![
-        Lili {
-            id: "1".to_string(),
-            text: "mi wile moku e kili e telo e pan".to_string(),
-            username: "jan+sona".to_string(),
-            timestamp: 1701044549,
-        },
-        Lili {
-            id: "2".to_string(),
-            text: "toki+lili li pona tawa mi".to_string(),
-            username: "jan+telo".to_string(),
-            timestamp: 1701008545,
-        },
-        Lili {
-            id: "3".to_string(),
-            text: "mi wile moku e kili".to_string(),
-            username: "jan+lili".to_string(),
-            timestamp: 1701019345,
-        },
-    ];
+pub struct FeedProps {
+    pub lilis: Vec<(Lili, Profile)>,
+}
 
-    let some_profile = Profile {
-        username: "jan+sona".to_string(),
-        name: "jan sona".to_string(),
-        avatar: format!(
-            "https://api.dicebear.com/7.x/big-smile/svg?seed={}",
-            "jan sona"
-        ),
-        bio: "mi wile moku e kili e telo e pan".to_string(),
-        website: "https://jan.sona".to_string(),
-        location: "ma+ali".to_string(),
-        birthday: "2000-01-01".to_string(),
-    };
+pub fn feed(props: FeedProps) -> Markup {
+    let lilis = props.lilis;
 
     html! {
         div id="feed" class="flex flex-col space-y-4" {
-            @for some_lili in fake_lilis {
-                (lili(some_lili, some_profile.clone()))
+            @for current_lili in lilis {
+                (lili(current_lili.0, current_lili.1))
             }
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Profile {
     pub username: String,
     pub name: String,
@@ -272,7 +245,6 @@ pub fn profile(a_profile: Profile) -> Markup {
                     }
                 }
                 div class="" {
-                    (feed())
                 }
             }
         }
