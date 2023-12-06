@@ -83,6 +83,9 @@ pub fn page(children: Markup, title: &str) -> MaudTemplate {
         }
         body hx-ext="preload" class="sitelen-pona" un-cloak {
             (children)
+            script defer { (PreEscaped("
+                htmx.config.globalViewTransitions = true;
+            ")) }
         }
     }
     .into()

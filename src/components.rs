@@ -136,7 +136,7 @@ pub fn lili(lili: Lili, poster: Profile) -> Markup {
 
 pub fn nav_link(href: &str, text: &str) -> Markup {
     html! {
-        a href=(href) class="text-blue-500 hover:text-blue-600 transition-colors" preload="mouseover" { (text) }
+        a href=(href) hx-boost="true" class="text-blue-500 hover:text-blue-600 transition-colors" preload="mouseover" { (text) }
     }
 }
 
