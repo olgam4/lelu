@@ -81,7 +81,7 @@ pub fn page(children: Markup, title: &str) -> MaudTemplate {
             (uno())
             (toki_pona())
         }
-        body hx-ext="preload" class="sitelen-pona" "[un-cloak]" {
+        body hx-ext="preload" class="sitelen-pona" un-cloak {
             (children)
         }
     }

@@ -78,7 +78,7 @@ pub fn lili(lili: Lili, poster: Profile) -> Markup {
             div
                 class="flex space-x-4"
                 x-data={(format!("{{ date: new Date({}) }}", lili.timestamp * 1000))} {
-                img src=(poster.avatar) class="w-10 h-10 rounded-full" alt="avatar" {}
+                img width="0" src=(poster.avatar) class="w-10 h-10 rounded-full" alt="avatar" {}
                 div class="flex-1" {
                     div class="flex justify-between items-center" {
                         div {
@@ -207,7 +207,7 @@ pub fn profile(a_profile: Profile) -> Markup {
                 div class="border-b space-y-4 pb-4" {
                     div class="flex justify-between items-center" {
                         div {
-                            img src=(a_profile.avatar) class="w-20 h-20 rounded-full" alt="avatar" {}
+                            img width="0" src=(a_profile.avatar) class="w-20 h-20 rounded-full" alt="avatar" {}
                         }
                         div {
                             ul class="flex space-x-4" {
