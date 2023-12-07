@@ -23,7 +23,10 @@ impl ProfileRegistry for ShuttlePersistProfileRegistry {
 
     fn create_profile(&self, profile: Profile) -> Result<(), String> {
         self.persist
-            .save(format!("{}{}", PROFILE_PREFIX, profile.username).as_str(), &profile)
+            .save(
+                format!("{}{}", PROFILE_PREFIX, profile.username).as_str(),
+                &profile,
+            )
             .map_err(|e| e.to_string())?;
 
         Ok(())

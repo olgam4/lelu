@@ -1,6 +1,10 @@
 use maud::html;
 
-use crate::{domain::Profile, ui::{FeedProps, page, feed, profile, nav}, infra::MaudTemplate};
+use crate::{
+    domain::Profile,
+    infra::MaudTemplate,
+    ui::{feed, nav, page, profile, FeedProps, NavProps},
+};
 
 pub struct ProfileProps {
     pub feed_props: FeedProps,
@@ -11,7 +15,7 @@ pub fn profile_page(props: ProfileProps) -> MaudTemplate {
     page(
         html! {
             div class="main-page" {
-                (nav())
+                (nav(NavProps { is_logged_in: true }))
                 div {
                     (profile(props.me_profile))
                     (feed(props.feed_props))

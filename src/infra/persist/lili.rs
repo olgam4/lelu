@@ -18,10 +18,9 @@ impl LiliRegistry for ShuttlePersistLiliRegistry {
     }
 
     fn create_lili(&self, lili: Lili) -> Result<(), String> {
-        let result = self.persist.save(
-            format!("{}{}", LILI_PREFIX, lili.id).as_str(),
-            &lili,
-        );
+        let result = self
+            .persist
+            .save(format!("{}{}", LILI_PREFIX, lili.id).as_str(), &lili);
 
         match result {
             Ok(_) => Ok(()),

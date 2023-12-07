@@ -37,4 +37,8 @@ impl AuthService {
 
         Ok(session.session_id)
     }
+
+    pub fn invalidate_session(&self, session_id: &str) -> Result<(), String> {
+        self.session_registry.delete_session(session_id)
+    }
 }

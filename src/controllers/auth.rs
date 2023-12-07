@@ -7,20 +7,29 @@ use rocket::{form::Form, State};
 
 use crate::{
     controllers::hero,
-    domain::{user::User, Profile},
+    domain::{user::User, Profile, CurrentSession},
     infra::MaudTemplate,
     ui::{login_form, page, sign_up_form},
     AppServices,
 };
 
 #[post("/login", data = "<text>")]
-pub async fn login_post(services: &State<AppServices>, text: Form<Signup>) -> MaudTemplate {
+pub async fn login_post(services: &State<AppServices>, text: Form<Signup>, current_session: CurrentSession) -> MaudTemplate {
     let session_id = services
         .auth_service
         .generate_session(&text.username, &text.password)
         .unwrap();
 
-    hero(services).with_cookie(format!("session={}", session_id))
+    // TODO: redirect to hero page
+    hero(services, current_session).with_cookie(format!("session={}", session_id))
+}
+
+#[get("/logout")]
+pub fn logout(services: &State<AppServices>, current_session: CurrentSession) -> MaudTemplate {
+    services.auth_service.invalidate_session(&current_session.session_id).unwrap();
+
+    hero(services, current_session).with_cookie("session=; Max-Age=0".to_string())
+
 }
 
 #[get("/signup")]
@@ -40,7 +49,7 @@ pub struct Signup {
 }
 
 #[post("/signup", data = "<text>")]
-pub async fn signup_post(services: &State<AppServices>, text: Form<Signup>) -> MaudTemplate {
+pub async fn signup_post(services: &State<AppServices>, text: Form<Signup>, current_session: CurrentSession) -> MaudTemplate {
     println!("signup post");
 
     let user = services.user_service.get_user(&text.username);
@@ -81,5 +90,6 @@ pub async fn signup_post(services: &State<AppServices>, text: Form<Signup>) -> M
         .generate_session(&text.username, &text.password)
         .unwrap();
 
-    hero(services).with_cookie(format!("session={}", session_id))
+    // TODO: redirect to hero page
+    hero(services, current_session).with_cookie(format!("session={}", session_id))
 }

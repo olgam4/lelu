@@ -57,14 +57,20 @@ impl<'r> FromRequest<'r> for CurrentSession {
             .expect("should be instantiaed");
         let cookies = request.cookies();
 
+        dbg!(cookies);
+
         let session = state
             .persist
             .list()
             .unwrap()
             .iter()
             .filter(|key| key.starts_with("session"))
-            .map(|key| state.persist.load::<CurrentSession>(&key))
-            .filter_map(Result::ok)
+            .map(|key| state.persist.load::<LoggedInSession>(&key))
+            .flatten()
+            .map(|session| CurrentSession {
+                session_id: session.session_id,
+                username: Some(session.username),
+            })
             .collect::<Vec<CurrentSession>>()
             .into_iter()
             .filter(|session| {

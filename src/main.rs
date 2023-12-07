@@ -1,3 +1,4 @@
+mod context;
 mod controllers;
 mod domain;
 mod infra;
@@ -6,14 +7,15 @@ mod ui;
 
 use std::sync::Arc;
 
-use infra::persist::{PersistShuttleSessionRegistry, ShuttlePersistUserRegistry};
 use rocket::fs::FileServer;
 use services::{auth::AuthService, lili::LiliService, profile::ProfileService, user::UserService};
 use shuttle_persist::PersistInstance;
 
-use controllers::{hero::hero, login, login_post, profile_page, signup, signup_post, toki_lili_post};
+use controllers::{
+    hero::hero, logout, login, login_post, profile_page, signup, signup_post, toki_lili_post,
+};
 
-use crate::infra::persist::{ShuttlePersistLiliRegistry, ShuttlePersistProfileRegistry};
+use crate::context::generate_context;
 
 #[macro_use]
 extern crate rocket;
@@ -36,32 +38,7 @@ async fn rocket(
 ) -> shuttle_rocket::ShuttleRocket {
     dbg!(persist.clone().list().unwrap());
 
-    let services = AppServices {
-        lili_service: Arc::new(LiliService::new(
-            Arc::new(ShuttlePersistLiliRegistry {
-                persist: persist.clone(),
-            }),
-            Arc::new(ShuttlePersistProfileRegistry {
-                persist: persist.clone(),
-            }),
-        )),
-        profile_service: Arc::new(ProfileService::new(Arc::new(
-            ShuttlePersistProfileRegistry {
-                persist: persist.clone(),
-            },
-        ))),
-        auth_service: Arc::new(AuthService::new(
-            Arc::new(ShuttlePersistUserRegistry {
-                persist: persist.clone(),
-            }),
-            Arc::new(PersistShuttleSessionRegistry {
-                persist: persist.clone(),
-            }),
-        )),
-        user_service: Arc::new(UserService::new(Arc::new(ShuttlePersistUserRegistry {
-            persist: persist.clone(),
-        }))),
-    };
+    let services = generate_context(persist.clone());
 
     let app = rocket::build()
         .mount(
@@ -73,7 +50,8 @@ async fn rocket(
                 signup,
                 signup_post,
                 login,
-                login_post
+                login_post,
+                logout,
             ],
         )
         .mount("/static", FileServer::from("static"))
