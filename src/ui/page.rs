@@ -1,6 +1,7 @@
 use maud::{html, Markup, PreEscaped};
 
-use crate::maud_custom::MaudTemplate;
+use crate::infra::MaudTemplate;
+
 
 fn htmx() -> Markup {
     html! {
