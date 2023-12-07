@@ -1,4 +1,4 @@
-use maud::{Markup, html};
+use maud::{html, Markup};
 
 pub fn login_form() -> Markup {
     html! {

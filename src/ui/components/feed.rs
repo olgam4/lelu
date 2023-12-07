@@ -1,6 +1,9 @@
 use maud::{html, Markup};
 
-use crate::{domain::{Lili, Profile}, ui::components::lili};
+use crate::{
+    domain::{Lili, Profile},
+    ui::components::lili,
+};
 
 pub struct FeedProps {
     pub lilis: Vec<(Lili, Profile)>,

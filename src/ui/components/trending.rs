@@ -1,4 +1,4 @@
-use maud::{Markup, html};
+use maud::{html, Markup};
 
 pub fn trending() -> Markup {
     html! {
@@ -20,5 +20,3 @@ pub fn trending() -> Markup {
         }
     }
 }
-
-

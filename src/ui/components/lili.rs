@@ -64,4 +64,3 @@ pub fn lili(lili: Lili, poster: Profile) -> Markup {
         }
     }
 }
-

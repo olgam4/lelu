@@ -1,4 +1,4 @@
-use maud::{Markup, html};
+use maud::{html, Markup};
 
 pub fn sign_up_form() -> Markup {
     html! {
@@ -34,4 +34,3 @@ pub fn sign_up_form() -> Markup {
         }
     }
 }
-

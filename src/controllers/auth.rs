@@ -1,12 +1,18 @@
-use nanoid::nanoid;
 use argon2::{
     password_hash::{rand_core::OsRng, PasswordHasher, SaltString},
     Argon2, PasswordHash, PasswordVerifier,
 };
+use nanoid::nanoid;
 
-use rocket::{State, form::Form};
+use rocket::{form::Form, State};
 
-use crate::{AppState, infra::MaudTemplate, domain::{LoggedInSession, Profile, user::User}, controllers::hello, ui::{page, sign_up_form, login_form}};
+use crate::{
+    controllers::hello,
+    domain::{user::User, LoggedInSession, Profile},
+    infra::MaudTemplate,
+    ui::{login_form, page, sign_up_form},
+    AppState,
+};
 
 #[post("/login", data = "<text>")]
 pub async fn login_post(state: &State<AppState>, text: Form<Signup>) -> MaudTemplate {
@@ -118,4 +124,3 @@ pub async fn signup_post(state: &State<AppState>, text: Form<Signup>) -> MaudTem
 
     login()
 }
-

@@ -1,10 +1,20 @@
 use nanoid::nanoid;
-use rocket::{State, form::Form};
+use rocket::{form::Form, State};
 
-use crate::{domain::{LoggedInSession, Lili, Profile}, AppState, LiliForm, ui::lili, infra::MaudTemplate};
+use crate::{
+    domain::{Lili, LoggedInSession, Profile},
+    infra::MaudTemplate,
+    ui::lili,
+    AppState,
+};
 
 pub fn event(name: String, info: String) -> String {
     format!("{{ \"{}\": \"{}\" }}", name, info)
+}
+
+#[derive(FromForm)]
+pub struct LiliForm {
+    pub text: String,
 }
 
 #[post("/toki_lili", data = "<lili_form>")]
@@ -40,4 +50,3 @@ pub async fn toki_lili_post(
         )]),
     }
 }
-

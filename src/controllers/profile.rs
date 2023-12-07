@@ -2,13 +2,19 @@ use itertools::Itertools;
 use maud::html;
 use rocket::State;
 
-use crate::{AppState, infra::MaudTemplate, domain::{Profile, Lili}, ui::{FeedProps, page, nav, profile, feed}};
+use crate::{
+    domain::{Lili, Profile},
+    infra::MaudTemplate,
+    ui::{feed, nav, page, profile, FeedProps},
+    AppState,
+};
 
 #[get("/profile")]
-pub fn profile_page(
-    state: &State<AppState>,
-) -> MaudTemplate {
-    let some_profile = state.persist.load::<Profile>(format!("profile_gamachexx").as_str()).unwrap();
+pub fn profile_page(state: &State<AppState>) -> MaudTemplate {
+    let some_profile = state
+        .persist
+        .load::<Profile>(format!("profile_gamachexx").as_str())
+        .unwrap();
 
     let lilis = state
         .persist

@@ -1,31 +1,18 @@
-mod infra;
-mod domain;
-mod ui;
 mod controllers;
+mod domain;
+mod infra;
+mod services;
+mod ui;
 
 use rocket::fs::FileServer;
 use shuttle_persist::PersistInstance;
 
-use controllers::{hello::hello, login, login_post, signup, signup_post, toki_lili_post, profile_page};
+use controllers::{
+    hello::hello, login, login_post, profile_page, signup, signup_post, toki_lili_post,
+};
 
 #[macro_use]
 extern crate rocket;
-
-
-#[derive(FromForm)]
-struct LiliForm {
-    pub text: String,
-}
-
-
-
-#[derive(FromForm)]
-struct Signup {
-    pub username: String,
-    pub password: String,
-}
-
-
 
 #[derive(Clone, Debug)]
 struct AppState {

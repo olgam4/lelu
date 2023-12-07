@@ -2,7 +2,12 @@ use itertools::Itertools;
 use maud::html;
 use rocket::State;
 
-use crate::{ui::{page, nav, toki_lili, feed, trending, FeedProps}, domain::{Lili, Profile}, AppState, infra::MaudTemplate};
+use crate::{
+    domain::{Lili, Profile},
+    infra::MaudTemplate,
+    ui::{feed, nav, page, toki_lili, trending, FeedProps},
+    AppState,
+};
 
 #[get("/")]
 pub fn hello(state: &State<AppState>) -> MaudTemplate {
@@ -43,4 +48,3 @@ pub fn hello(state: &State<AppState>) -> MaudTemplate {
         "Toki Lili",
     )
 }
-
