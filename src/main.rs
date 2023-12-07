@@ -35,7 +35,6 @@ async fn rocket(
     #[shuttle_persist::Persist] persist: PersistInstance,
 ) -> shuttle_rocket::ShuttleRocket {
     dbg!(persist.clone().list().unwrap());
-    persist.clear().unwrap();
 
     let services = AppServices {
         lili_service: Arc::new(LiliService::new(

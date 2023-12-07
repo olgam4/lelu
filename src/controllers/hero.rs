@@ -1,10 +1,9 @@
 use itertools::Itertools;
-use maud::html;
 use rocket::State;
 
 use crate::{
     infra::MaudTemplate,
-    ui::{feed, nav, page, toki_lili, trending, FeedProps},
+    ui::{FeedProps, HeroProps},
     AppServices,
 };
 
@@ -27,17 +26,9 @@ pub fn hero(services: &State<AppServices>) -> MaudTemplate {
         lilis: lilis_with_their_profiles,
     };
 
-    page(
-        html! {
-            div class="main-page" {
-                (nav())
-                div {
-                    (toki_lili())
-                    (feed(feed_props))
-                }
-                (trending())
-            }
-        },
-        "Toki Lili",
-    )
+    let props = HeroProps {
+        feed_props,
+    };
+
+    crate::ui::hero::hero(props)
 }

@@ -1,10 +1,9 @@
-use maud::html;
 use rocket::State;
 
 use crate::{
     domain::LoggedInSession,
     infra::MaudTemplate,
-    ui::{feed, nav, page, profile, FeedProps},
+    ui::{profile, FeedProps, ProfileProps},
     AppServices,
 };
 
@@ -30,17 +29,10 @@ pub fn profile_page(
             .collect(),
     };
 
-    page(
-        html! {
-            div class="main-page" {
-                (nav())
-                div {
-                    (profile(me_profile.clone()))
-                    (feed(feed_props))
-                }
-                div {}
-            }
-        },
-        "Profile",
-    )
+    let props = ProfileProps {
+        feed_props,
+        me_profile,
+    };
+
+    profile::profile_page(props)
 }
