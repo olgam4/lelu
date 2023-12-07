@@ -1,11 +1,7 @@
-use nanoid::nanoid;
 use rocket::{form::Form, State};
 
 use crate::{
-    domain::{Lili, LoggedInSession, Profile},
-    infra::MaudTemplate,
-    ui::lili,
-    AppState,
+    domain::LoggedInSession, infra::MaudTemplate, services::lili::NewLili, ui, AppServices,
 };
 
 pub fn event(name: String, info: String) -> String {
@@ -19,31 +15,19 @@ pub struct LiliForm {
 
 #[post("/toki_lili", data = "<lili_form>")]
 pub async fn toki_lili_post(
-    app_state: &State<AppState>,
     lili_form: Form<LiliForm>,
     session: LoggedInSession,
+    services: &State<AppServices>,
 ) -> MaudTemplate {
-    let id = nanoid!();
-
-    let new_lili = Lili {
-        id: "1".to_string(),
+    let new_lili = NewLili {
         text: lili_form.text.clone(),
-        username: session.username.clone(),
-        timestamp: chrono::Utc::now().timestamp(),
+        from_username: session.username.clone(),
     };
 
-    app_state
-        .persist
-        .save::<Lili>(format!("lili_{}", id.clone()).as_str(), new_lili.clone())
-        .unwrap();
-
-    let some_profile = app_state
-        .persist
-        .load::<Profile>(format!("profile_{}", session.username.clone()).as_str())
-        .unwrap();
+    let (lili, profile) = services.lili_service.create_lili(new_lili).unwrap();
 
     MaudTemplate {
-        string: lili(new_lili, some_profile),
+        string: ui::lili(lili, profile),
         headers: Some(vec![(
             "HX-Trigger-After-Swap".to_string(),
             event("notify".to_string(), "toki+lili li sitelen".to_string()),

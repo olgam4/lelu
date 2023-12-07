@@ -1,35 +1,32 @@
-use itertools::Itertools;
 use maud::html;
 use rocket::State;
 
 use crate::{
-    domain::{Lili, Profile},
+    domain::LoggedInSession,
     infra::MaudTemplate,
     ui::{feed, nav, page, profile, FeedProps},
-    AppState,
+    AppServices,
 };
 
-#[get("/profile")]
-pub fn profile_page(state: &State<AppState>) -> MaudTemplate {
-    let some_profile = state
-        .persist
-        .load::<Profile>(format!("profile_gamachexx").as_str())
+#[get("/me")]
+pub fn profile_page(
+    services: &State<AppServices>,
+    current_session: LoggedInSession,
+) -> MaudTemplate {
+    let me_profile = services
+        .profile_service
+        .get_profile(&current_session.username)
         .unwrap();
 
-    let lilis = state
-        .persist
-        .list()
-        .unwrap()
-        .iter()
-        .filter(|key| key.starts_with("lili_"))
-        .map(|key| state.persist.load::<Lili>(key).unwrap())
-        .sorted_by(|a, b| b.timestamp.cmp(&a.timestamp))
-        .collect::<Vec<Lili>>();
+    let lilis = services
+        .lili_service
+        .get_all_lilis_from_user(&me_profile.username)
+        .unwrap();
 
     let feed_props = FeedProps {
         lilis: lilis
-            .iter()
-            .map(|c| (c.to_owned(), some_profile.clone()))
+            .into_iter()
+            .map(|lili| (lili.lili, lili.profile))
             .collect(),
     };
 
@@ -38,7 +35,7 @@ pub fn profile_page(state: &State<AppState>) -> MaudTemplate {
             div class="main-page" {
                 (nav())
                 div {
-                    (profile(some_profile.clone()))
+                    (profile(me_profile.clone()))
                     (feed(feed_props))
                 }
                 div {}

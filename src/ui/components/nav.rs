@@ -11,7 +11,7 @@ pub fn nav() -> Markup {
         nav {
             ul {
                 li { (nav_link("/", "toki+lili")) }
-                li { (nav_link("/profile", "mi")) }
+                li { (nav_link("/me", "mi")) }
                 li { (nav_link("/signup", "pali e lipu")) }
             }
         }
