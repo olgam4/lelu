@@ -1,6 +1,7 @@
 mod components;
 mod maud_custom;
 mod page;
+mod session;
 
 use components::{login_form, sign_up_form, toast, FeedProps};
 use itertools::Itertools;
@@ -18,11 +19,10 @@ use argon2::{
 
 use crate::{
     components::{feed, nav, profile, toki_lili, trending},
-    maud_custom::MaudTemplate,
-};
-use crate::{
     components::{lili, Profile},
+    maud_custom::MaudTemplate,
     page::page,
+    session::LoggedInSession,
 };
 
 #[macro_use]
@@ -46,13 +46,17 @@ pub fn event(name: String, info: String) -> String {
 }
 
 #[post("/toki_lili", data = "<lili_form>")]
-async fn toki_lili_post(app_state: &State<AppState>, lili_form: Form<LiliForm>) -> MaudTemplate {
+async fn toki_lili_post(
+    app_state: &State<AppState>,
+    lili_form: Form<LiliForm>,
+    session: LoggedInSession,
+    ) -> MaudTemplate {
     let id = nanoid!();
 
     let new_lili = Lili {
         id: "1".to_string(),
         text: lili_form.text.clone(),
-        username: "jan+telo".to_string(),
+        username: session.username.clone(),
         timestamp: chrono::Utc::now().timestamp(),
     };
 
@@ -63,7 +67,7 @@ async fn toki_lili_post(app_state: &State<AppState>, lili_form: Form<LiliForm>) 
 
     let some_profile = app_state
         .persist
-        .load::<Profile>("profile_jan+sona")
+        .load::<Profile>(format!("profile_{}", session.username.clone()).as_str())
         .unwrap();
 
     MaudTemplate {
@@ -77,7 +81,7 @@ async fn toki_lili_post(app_state: &State<AppState>, lili_form: Form<LiliForm>) 
 
 #[get("/")]
 fn hello(state: &State<AppState>) -> MaudTemplate {
-    let some_profile = state.persist.load::<Profile>("profile_jan+sona").unwrap();
+    let some_profile = state.persist.load::<Profile>("profile_gamachexx").unwrap();
 
     let lilis = state
         .persist
@@ -115,9 +119,12 @@ fn hello(state: &State<AppState>) -> MaudTemplate {
     )
 }
 
-#[get("/profile")]
-fn profile_page(state: &State<AppState>) -> MaudTemplate {
-    let some_profile = state.persist.load::<Profile>("profile_jan+sona").unwrap();
+#[get("/profile/<username>")]
+fn profile_page(
+    state: &State<AppState>,
+    username: String,
+) -> MaudTemplate {
+    let some_profile = state.persist.load::<Profile>(format!("profile_{}", username).as_str()).unwrap();
 
     let lilis = state
         .persist
@@ -167,6 +174,15 @@ struct User {
 async fn signup_post(state: &State<AppState>, text: Form<Signup>) -> MaudTemplate {
     println!("signup post");
 
+    let user = state
+        .persist
+        .load::<User>(format!("user_{}", text.username.clone()).as_str())
+        .map_err(|_| signup())
+        .ok();
+    if user.is_some() {
+        return signup();
+    }
+
     let salt = SaltString::generate(&mut OsRng);
     let argon2 = Argon2::default();
     let password_hash = argon2
@@ -187,7 +203,7 @@ async fn signup_post(state: &State<AppState>, text: Form<Signup>) -> MaudTemplat
     state
         .persist
         .save::<Profile>(
-            format!("profile_{}", "jan+sona").as_str(),
+            format!("profile_{}", text.username.clone()).as_str(),
             Profile {
                 username: text.username.clone(),
                 name: text.username.clone(),
@@ -217,17 +233,36 @@ async fn login_post(state: &State<AppState>, text: Form<Signup>) -> MaudTemplate
 
     let user = match user {
         Some(user) => user,
-        None => return toast("User not found".to_string()).into(),
+        None => return login(),
     };
 
     let parsed_hash = PasswordHash::new(&user.password_hash).unwrap();
     let result = Argon2::default().verify_password(text.password.as_bytes(), &parsed_hash);
 
     match result {
-        Ok(_) => toast("Logged in".to_string()),
-        Err(_) => toast("User not found".to_string()),
+        Ok(_) => {
+            let session = LoggedInSession {
+                session_id: nanoid!(32),
+                username: text.username.clone(),
+                expires: chrono::Utc::now().timestamp() + 60 * 60 * 8,
+            };
+
+            dbg!(session.session_id.clone());
+
+            state
+                .persist
+                .save::<LoggedInSession>(
+                    format!("session_{}", session.session_id.clone()).as_str(),
+                    session.clone(),
+                )
+                .unwrap();
+
+            dbg!(session.clone());
+
+            hello(state).with_cookie(format!("session={}", session.session_id))
+        }
+        Err(_) => login(),
     }
-    .into()
 }
 
 #[get("/signup")]
@@ -240,6 +275,12 @@ fn login() -> MaudTemplate {
     page(login_form(), "Login")
 }
 
+#[get("/secure")]
+fn secure(_session: LoggedInSession) -> MaudTemplate {
+    page(html! { div { "Secure" } }, "Secure")
+}
+
+#[derive(Clone, Debug)]
 struct AppState {
     pub persist: PersistInstance,
 }
@@ -254,6 +295,7 @@ async fn rocket(
         .mount(
             "/",
             routes![
+                secure,
                 hello,
                 profile_page,
                 toki_lili_post,

@@ -8,6 +8,7 @@ pub fn login_form() -> Markup {
         div class="m-4" {
             form
                 hx-post="/login"
+                hx-target="body"
                 x-data
                 x-on:submit="setTimeout(() => {
                         $el.reset();
@@ -42,6 +43,7 @@ pub fn sign_up_form() -> Markup {
         div class="m-4" {
             form
                 hx-post="/signup"
+                hx-target="body"
                 x-data
                 x-on:submit="setTimeout(() => {
                         $el.reset();

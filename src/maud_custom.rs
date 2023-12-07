@@ -13,6 +13,24 @@ pub struct MaudTemplate {
 }
 
 impl MaudTemplate {
+    pub fn with_cookie(self, cookie: String) -> Self {
+        let mut headers = match self.headers {
+            Some(headers) => headers,
+            None => vec![],
+        };
+
+        let base_cookie = "; HttpOnly; SameSite=Strict; Path=/; Max-Age=31536000; Secure; ";
+        headers.push((
+            "Set-Cookie".to_string(),
+            format!("{}{}", cookie, base_cookie),
+        ));
+
+        MaudTemplate {
+            string: self.string,
+            headers: Some(headers),
+        }
+    }
+
     fn len(&self) -> usize {
         self.string.0.len()
     }
