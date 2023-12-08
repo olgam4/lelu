@@ -4,8 +4,8 @@ use shuttle_persist::PersistInstance;
 
 use crate::{
     infra::persist::{
-        PersistShuttleSessionRegistry, ShuttlePersistLiliRegistry, ShuttlePersistProfileRegistry,
-        ShuttlePersistUserRegistry,
+        PersistShuttleSessionRegistry, ShuttlePersistLiliRegistry, ShuttlePersistPonaRegistry,
+        ShuttlePersistProfileRegistry, ShuttlePersistUserRegistry,
     },
     services::{auth::AuthService, lili::LiliService, profile::ProfileService, user::UserService},
     AppServices,
@@ -18,6 +18,9 @@ pub fn generate_context(persist: PersistInstance) -> AppServices {
                 persist: persist.clone(),
             }),
             Arc::new(ShuttlePersistProfileRegistry {
+                persist: persist.clone(),
+            }),
+            Arc::new(ShuttlePersistPonaRegistry {
                 persist: persist.clone(),
             }),
         )),

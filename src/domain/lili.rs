@@ -8,6 +8,8 @@ pub struct Lili {
     pub text: String,
     pub username: String,
     pub timestamp: i64,
+    pub liked_by_me: bool,
+    pub ponas: i64,
 }
 
 pub trait LiliRegistry: Send + Sync {

@@ -42,8 +42,10 @@ pub fn lili(lili: Lili, poster: Profile) -> Markup {
                         }
                     }
                     li {
-                        button class="bg-gray-100 text-gray-400 p-2 rounded-full cursor-pointer hover:text-red-500 transition-colors" {
-                            div class="w-4 h-4 inline-block mr-1" { "pona" }
+                        @if lili.liked_by_me {
+                            (pona_active(lili.id, lili.ponas))
+                        } @else {
+                            (pona_inactive(lili.id, lili.ponas))
                         }
                     }
                     li {
@@ -52,7 +54,8 @@ pub fn lili(lili: Lili, poster: Profile) -> Markup {
                         }
                     }
                     li {
-                        button class="bg-gray-100 text-gray-400 p-2 rounded-full cursor-pointer hover:text-blue-500 transition-colors" {
+                        button
+                            class="bg-gray-100 text-gray-400 p-2 rounded-full cursor-pointer hover:text-blue-500 transition-colors" {
                             div class="i-carbon-bookmark w-4 h-4 inline-block mr-1" {}
                         }
                     }
@@ -64,5 +67,29 @@ pub fn lili(lili: Lili, poster: Profile) -> Markup {
                 }
             }
         }
+    }
+}
+
+pub fn pona_active(lili_id: String, qty: i64) -> Markup {
+    html! {
+        button
+            hx-post=(format!("/ike/{}", lili_id))
+            hx-swap="outerHTML"
+            class="bg-gray-100 text-red-400 p-2 rounded-full cursor-pointer hover:text-blue-500 transition-colors" {
+            div class="w-4 h-4 inline-block mr-1" { "pona" }
+        }
+        span class="text-red-400" { (qty) }
+    }
+}
+
+pub fn pona_inactive(lili_id: String, qty: i64) -> Markup {
+    html! {
+        button
+            hx-post=(format!("/pona/{}", lili_id))
+            hx-swap="outerHTML"
+            class="bg-gray-100 text-gray-400 p-2 rounded-full cursor-pointer hover:text-blue-500 transition-colors" {
+            div class="w-4 h-4 inline-block mr-1" { "pona" }
+        }
+        span class="text-red-400" { (qty) }
     }
 }

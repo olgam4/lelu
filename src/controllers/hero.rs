@@ -10,7 +10,11 @@ use crate::{
 
 #[get("/")]
 pub fn hero(services: &State<AppServices>, current_session: CurrentSession) -> MaudTemplate {
-    let lilis = services.lili_service.get_all_lilis();
+    let username = match current_session.username {
+        Some(ref username) => username.clone(),
+        None => "".to_string(),
+    };
+    let lilis = services.lili_service.get_all_lilis(&username);
 
     let lilis_with_their_profiles = lilis
         .into_iter()

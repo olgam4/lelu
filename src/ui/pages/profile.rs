@@ -17,7 +17,7 @@ pub fn profile_page(props: ProfileProps) -> MaudTemplate {
         html! {
             div class="main-page" {
                 (nav(props.nav_props))
-                div {
+                div id="hero" {
                     (profile(props.me_profile))
                     (feed(props.feed_props))
                 }

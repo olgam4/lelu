@@ -3,10 +3,13 @@ use argon2::{
     Argon2,
 };
 
-use rocket::{form::Form, State, response::{Redirect, Responder}};
+use rocket::{
+    form::Form,
+    response::{Redirect, Responder},
+    State,
+};
 
 use crate::{
-    controllers::hero,
     domain::{user::User, CurrentSession, Profile},
     infra::MaudTemplate,
     ui::{login_form, page, sign_up_form},
@@ -29,10 +32,7 @@ impl<'r, 'o: 'r> Responder<'r, 'o> for RedirectWithCookie {
 }
 
 #[post("/login", data = "<text>")]
-pub async fn login_post(
-    services: &State<AppServices>,
-    text: Form<Signup>,
-) -> RedirectWithCookie {
+pub async fn login_post(services: &State<AppServices>, text: Form<Signup>) -> RedirectWithCookie {
     let session_id = services
         .auth_service
         .generate_session(&text.username, &text.password);
@@ -52,7 +52,10 @@ pub async fn login_post(
 }
 
 #[get("/logout")]
-pub fn logout(services: &State<AppServices>, current_session: CurrentSession) -> RedirectWithCookie {
+pub fn logout(
+    services: &State<AppServices>,
+    current_session: CurrentSession,
+) -> RedirectWithCookie {
     let _ = services
         .auth_service
         .invalidate_session(&current_session.session_id);
@@ -80,10 +83,7 @@ pub struct Signup {
 }
 
 #[post("/signup", data = "<text>")]
-pub async fn signup_post(
-    services: &State<AppServices>,
-    text: Form<Signup>,
-) -> RedirectWithCookie {
+pub async fn signup_post(services: &State<AppServices>, text: Form<Signup>) -> RedirectWithCookie {
     let err_redirect = RedirectWithCookie {
         redirect: Redirect::to("/signup"),
         cookie: "session=; Max-Age=0".to_string(),

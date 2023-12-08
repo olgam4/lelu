@@ -1,9 +1,9 @@
 use rocket::State;
 
 use crate::{
-    domain::{LoggedInSession, CurrentSession},
+    domain::{CurrentSession, LoggedInSession},
     infra::MaudTemplate,
-    ui::{profile, FeedProps, ProfileProps, NavProps},
+    ui::{profile, FeedProps, NavProps, ProfileProps},
     AppServices,
 };
 
@@ -29,9 +29,7 @@ pub fn profile_page(
             .collect(),
     };
 
-    let nav_props = NavProps {
-        is_logged_in: true,
-    };
+    let nav_props = NavProps { is_logged_in: true };
 
     let props = ProfileProps {
         feed_props,
@@ -43,7 +41,11 @@ pub fn profile_page(
 }
 
 #[get("/profile/<username>")]
-pub fn specific_profile_page(services: &State<AppServices>, username: String, current_session: CurrentSession) -> MaudTemplate {
+pub fn specific_profile_page(
+    services: &State<AppServices>,
+    username: String,
+    current_session: CurrentSession,
+) -> MaudTemplate {
     let the_profile = services.profile_service.get_profile(&username).unwrap();
 
     let lilis = services

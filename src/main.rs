@@ -12,8 +12,8 @@ use services::{auth::AuthService, lili::LiliService, profile::ProfileService, us
 use shuttle_persist::PersistInstance;
 
 use controllers::{
-    hero::hero, login, login_post, logout, profile_page, signup, signup_post,
-    specific_profile_page, toki_lili_post,
+    hero::hero, login, login_post, logout, pona_lili_post, profile_page, signup, signup_post,
+    specific_profile_page, toki_lili_post, ike_lili_post,
 };
 
 use crate::context::generate_context;
@@ -49,6 +49,8 @@ async fn rocket(
                 profile_page,
                 specific_profile_page,
                 toki_lili_post,
+                pona_lili_post,
+                ike_lili_post,
                 signup,
                 signup_post,
                 login,
