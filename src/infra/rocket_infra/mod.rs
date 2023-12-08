@@ -23,10 +23,11 @@ impl<'r> FromRequest<'r> for LoggedInSession {
         let session = state
             .persist
             .list()
-            .unwrap()
+            .expect("should be instantiaed")
             .iter()
             .filter(|key| key.starts_with("session"))
-            .map(|key| state.persist.load::<LoggedInSession>(&key).unwrap())
+            .map(|key| state.persist.load::<LoggedInSession>(&key))
+            .flatten()
             .collect::<Vec<LoggedInSession>>()
             .into_iter()
             .filter(|session| {

@@ -20,7 +20,7 @@ impl AuthService {
             .user_registry
             .get_user(username)
             .ok_or("User not found".to_string())?;
-        let parsed_hash = PasswordHash::new(&user.password_hash).unwrap();
+        let parsed_hash = PasswordHash::new(&user.password_hash).expect("Invalid password hash");
         let result = Argon2::default().verify_password(password.as_bytes(), &parsed_hash);
 
         if result.is_err() {

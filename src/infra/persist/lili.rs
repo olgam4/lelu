@@ -13,7 +13,8 @@ impl LiliRegistry for ShuttlePersistLiliRegistry {
         let list = self.persist.list().expect("should be instantiaed");
         list.iter()
             .filter(|key| key.starts_with(LILI_PREFIX))
-            .map(|key| self.persist.load::<Lili>(&key).unwrap())
+            .map(|key| self.persist.load::<Lili>(&key))
+            .flatten()
             .collect::<Vec<Lili>>()
     }
 

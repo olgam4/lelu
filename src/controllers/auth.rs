@@ -21,8 +21,12 @@ pub async fn login_post(
 ) -> MaudTemplate {
     let session_id = services
         .auth_service
-        .generate_session(&text.username, &text.password)
-        .unwrap();
+        .generate_session(&text.username, &text.password);
+
+    if session_id.is_err() {
+        return login();
+    }
+    let session_id = session_id.expect("should be instantiaed");
 
     // TODO: redirect to hero page
     hero(services, current_session).with_cookie(format!("session={}", session_id))
@@ -30,10 +34,9 @@ pub async fn login_post(
 
 #[get("/logout")]
 pub fn logout(services: &State<AppServices>, current_session: CurrentSession) -> MaudTemplate {
-    services
+    let _ = services
         .auth_service
-        .invalidate_session(&current_session.session_id)
-        .unwrap();
+        .invalidate_session(&current_session.session_id);
 
     hero(services, current_session).with_cookie("session=; Max-Age=0".to_string())
 }
@@ -69,14 +72,17 @@ pub async fn signup_post(
     let argon2 = Argon2::default();
     let password_hash = argon2
         .hash_password(text.password.as_bytes(), &salt)
-        .unwrap();
+        .expect("argon2 hashing should work");
 
     let user = User {
         username: text.username.clone(),
         password_hash: password_hash.to_string(),
     };
 
-    services.user_service.create_user(user).unwrap();
+    let result = services.user_service.create_user(user);
+    if result.is_err() {
+        return signup();
+    }
 
     let profile = Profile {
         username: text.username.clone(),
@@ -91,12 +97,19 @@ pub async fn signup_post(
         birthday: "".to_string(),
     };
 
-    services.profile_service.create_profile(profile).unwrap();
+    let result = services.profile_service.create_profile(profile);
+    if result.is_err() {
+        return signup();
+    }
 
     let session_id = services
         .auth_service
-        .generate_session(&text.username, &text.password)
-        .unwrap();
+        .generate_session(&text.username, &text.password);
+
+    if session_id.is_err() {
+        return signup();
+    }
+    let session_id = session_id.expect("should be instantiaed");
 
     // TODO: redirect to hero page
     hero(services, current_session).with_cookie(format!("session={}", session_id))

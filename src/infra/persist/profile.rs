@@ -14,7 +14,8 @@ impl ProfileRegistry for ShuttlePersistProfileRegistry {
 
         list.iter()
             .filter(|key| key.starts_with(PROFILE_PREFIX))
-            .map(|key| self.persist.load::<Profile>(&key).unwrap())
+            .map(|key| self.persist.load::<Profile>(&key))
+            .flatten()
             .collect::<Vec<Profile>>()
             .into_iter()
             .filter(|profile| profile.username == username)

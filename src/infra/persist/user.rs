@@ -14,7 +14,8 @@ impl UserRegistry for ShuttlePersistUserRegistry {
 
         list.iter()
             .filter(|key| key.starts_with(USER_PREFIX))
-            .map(|key| self.persist.load::<User>(&key).unwrap())
+            .map(|key| self.persist.load::<User>(&key))
+            .flatten()
             .collect::<Vec<User>>()
             .into_iter()
             .filter(|user| user.username == username)
