@@ -29,7 +29,8 @@ impl SessionRegistry for PersistShuttleSessionRegistry {
     }
 
     fn delete_session(&self, session_id: &str) -> Result<(), String> {
-        let _ = self.persist
+        let _ = self
+            .persist
             .remove(format!("{}{}", SESSION_PREFIX, session_id).as_str())
             .map_err(|e| e.to_string());
 

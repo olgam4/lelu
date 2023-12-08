@@ -20,8 +20,6 @@ impl<'r> FromRequest<'r> for LoggedInSession {
             .expect("should be instantiaed");
         let cookies = request.cookies();
 
-        dbg!(state.persist.clone().list().unwrap());
-
         let session = state
             .persist
             .list()
@@ -56,8 +54,6 @@ impl<'r> FromRequest<'r> for CurrentSession {
             .await
             .expect("should be instantiaed");
         let cookies = request.cookies();
-
-        dbg!(cookies);
 
         let session = state
             .persist

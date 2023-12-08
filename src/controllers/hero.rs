@@ -2,16 +2,15 @@ use itertools::Itertools;
 use rocket::State;
 
 use crate::{
+    domain::CurrentSession,
     infra::MaudTemplate,
     ui::{FeedProps, HeroProps, NavProps},
-    AppServices, domain::CurrentSession,
+    AppServices,
 };
 
 #[get("/")]
 pub fn hero(services: &State<AppServices>, current_session: CurrentSession) -> MaudTemplate {
     let lilis = services.lili_service.get_all_lilis();
-
-    dbg!(&current_session);
 
     let lilis_with_their_profiles = lilis
         .into_iter()
@@ -32,7 +31,10 @@ pub fn hero(services: &State<AppServices>, current_session: CurrentSession) -> M
         is_logged_in: current_session.username.is_some(),
     };
 
-    let props = HeroProps { feed_props, nav_props };
+    let props = HeroProps {
+        feed_props,
+        nav_props,
+    };
 
     crate::ui::hero::hero(props)
 }

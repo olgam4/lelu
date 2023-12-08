@@ -12,7 +12,7 @@ use services::{auth::AuthService, lili::LiliService, profile::ProfileService, us
 use shuttle_persist::PersistInstance;
 
 use controllers::{
-    hero::hero, logout, login, login_post, profile_page, signup, signup_post, toki_lili_post,
+    hero::hero, login, login_post, logout, profile_page, signup, signup_post, toki_lili_post,
 };
 
 use crate::context::generate_context;

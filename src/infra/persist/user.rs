@@ -22,10 +22,9 @@ impl UserRegistry for ShuttlePersistUserRegistry {
     }
 
     fn create_user(&self, user: User) -> Result<(), String> {
-        let result = self.persist.save(
-            format!("{}{}", USER_PREFIX, user.username).as_str(),
-            &user,
-        );
+        let result = self
+            .persist
+            .save(format!("{}{}", USER_PREFIX, user.username).as_str(), &user);
 
         match result {
             Ok(_) => Ok(()),
