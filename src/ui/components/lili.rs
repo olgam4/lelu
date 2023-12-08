@@ -9,10 +9,12 @@ pub fn lili(lili: Lili, poster: Profile) -> Markup {
             div
                 class="flex space-x-4"
                 x-data={(format!("{{ date: new Date({}) }}", lili.timestamp * 1000))} {
-                img width="0" src=(poster.avatar) class="w-10 h-10 rounded-full" alt="avatar" {}
+                a href=(format!("/profile/{}", poster.username)) hx-boost="true" {
+                    img width="0" src=(poster.avatar) class="w-10 h-10 rounded-full" alt="avatar" {}
+                }
                 div class="flex-1" {
                     div class="flex justify-between items-center" {
-                        div {
+                        a href=(format!("/profile/{}", poster.username)) hx-boost="true" {
                             h2 class="text-lg" {
                                 (poster.name)
                                 span class="text-gray-400 text-sm normal" { "@" (poster.username) }

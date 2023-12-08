@@ -3,7 +3,7 @@ use argon2::{
     Argon2,
 };
 
-use rocket::{form::Form, State};
+use rocket::{form::Form, State, response::{Redirect, Responder}};
 
 use crate::{
     controllers::hero,
@@ -13,32 +13,54 @@ use crate::{
     AppServices,
 };
 
+pub struct RedirectWithCookie {
+    redirect: Redirect,
+    cookie: String,
+}
+
+impl<'r, 'o: 'r> Responder<'r, 'o> for RedirectWithCookie {
+    fn respond_to(self, request: &'r rocket::Request<'_>) -> rocket::response::Result<'o> {
+        let mut response = self.redirect.respond_to(request)?;
+        let base_cookie = "; HttpOnly; SameSite=Strict; Path=/; Max-Age=31536000; Secure; ";
+        let cookie = format!("{}{}", self.cookie, base_cookie);
+        response.set_raw_header("Set-Cookie", cookie);
+        Ok(response)
+    }
+}
+
 #[post("/login", data = "<text>")]
 pub async fn login_post(
     services: &State<AppServices>,
     text: Form<Signup>,
-    current_session: CurrentSession,
-) -> MaudTemplate {
+) -> RedirectWithCookie {
     let session_id = services
         .auth_service
         .generate_session(&text.username, &text.password);
 
     if session_id.is_err() {
-        return login();
+        return RedirectWithCookie {
+            redirect: Redirect::to("/login"),
+            cookie: "session=; Max-Age=0".to_string(),
+        };
     }
     let session_id = session_id.expect("should be instantiaed");
 
-    // TODO: redirect to hero page
-    hero(services, current_session).with_cookie(format!("session={}", session_id))
+    RedirectWithCookie {
+        redirect: Redirect::to("/"),
+        cookie: format!("session={}", session_id),
+    }
 }
 
 #[get("/logout")]
-pub fn logout(services: &State<AppServices>, current_session: CurrentSession) -> MaudTemplate {
+pub fn logout(services: &State<AppServices>, current_session: CurrentSession) -> RedirectWithCookie {
     let _ = services
         .auth_service
         .invalidate_session(&current_session.session_id);
 
-    hero(services, current_session).with_cookie("session=; Max-Age=0".to_string())
+    RedirectWithCookie {
+        redirect: Redirect::to("/"),
+        cookie: "session=; Max-Age=0".to_string(),
+    }
 }
 
 #[get("/signup")]
@@ -61,11 +83,15 @@ pub struct Signup {
 pub async fn signup_post(
     services: &State<AppServices>,
     text: Form<Signup>,
-    current_session: CurrentSession,
-) -> MaudTemplate {
+) -> RedirectWithCookie {
+    let err_redirect = RedirectWithCookie {
+        redirect: Redirect::to("/signup"),
+        cookie: "session=; Max-Age=0".to_string(),
+    };
+
     let user = services.user_service.get_user(&text.username);
     if user.is_some() {
-        return signup();
+        return err_redirect;
     }
 
     let salt = SaltString::generate(&mut OsRng);
@@ -81,7 +107,7 @@ pub async fn signup_post(
 
     let result = services.user_service.create_user(user);
     if result.is_err() {
-        return signup();
+        return err_redirect;
     }
 
     let profile = Profile {
@@ -99,7 +125,7 @@ pub async fn signup_post(
 
     let result = services.profile_service.create_profile(profile);
     if result.is_err() {
-        return signup();
+        return err_redirect;
     }
 
     let session_id = services
@@ -107,10 +133,12 @@ pub async fn signup_post(
         .generate_session(&text.username, &text.password);
 
     if session_id.is_err() {
-        return signup();
+        return err_redirect;
     }
     let session_id = session_id.expect("should be instantiaed");
 
-    // TODO: redirect to hero page
-    hero(services, current_session).with_cookie(format!("session={}", session_id))
+    RedirectWithCookie {
+        redirect: Redirect::to("/"),
+        cookie: format!("session={}", session_id),
+    }
 }

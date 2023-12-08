@@ -24,7 +24,10 @@ pub async fn toki_lili_post(
         from_username: session.username.clone(),
     };
 
-    let (lili, profile) = services.lili_service.create_lili(new_lili).expect("should be logged in");
+    let (lili, profile) = services
+        .lili_service
+        .create_lili(new_lili)
+        .expect("should be logged in");
 
     MaudTemplate {
         string: ui::lili(lili, profile),
