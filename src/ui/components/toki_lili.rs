@@ -10,7 +10,9 @@ pub fn toki_lili() -> Markup {
             x-on:submit="setTimeout(() => $el.reset(), 1)"
             x-data="{ text: '' }" {
             div class="relative flex" {
+                label for="text" class="sr-only" { "toki lili" }
                 textarea
+                    id="text"
                     name="text"
                     x-model="text"
                     class="bg-gray-100 p-4 rounded-lg w-full resize-none normal"

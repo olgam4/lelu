@@ -10,6 +10,12 @@ pub fn nav_link(href: &str, text: &str) -> Markup {
     }
 }
 
+pub fn action_link(href: &str, text: &str) -> Markup {
+    html! {
+        a href=(href) hx-boost="true" class="text-blue-500 hover:text-blue-600 transition-colors" { (text) }
+    }
+}
+
 pub fn nav(props: NavProps) -> Markup {
     html! {
         nav {
@@ -17,7 +23,7 @@ pub fn nav(props: NavProps) -> Markup {
                 li { (nav_link("/", "toki+lili")) }
                 @if props.is_logged_in {
                     li { (nav_link("/me", "mi")) }
-                    li { (nav_link("/logout", "o pini")) }
+                    li { (action_link("/logout", "o pini")) }
                 }
                 @if !props.is_logged_in {
                     li { (nav_link("/login", "o pali e lipu")) }

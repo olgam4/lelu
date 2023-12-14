@@ -38,7 +38,7 @@ pub fn lili(lili: Lili, poster: Profile) -> Markup {
                 ul class="flex justify-between mx-auto w-3/4" {
                     li {
                         button class="bg-gray-100 text-gray-400 p-2 rounded-full cursor-pointer hover:text-blue-500 transition-colors" {
-                            div class="i-carbon-chat w-4 h-4 inline-block mr-1" {}
+                            i class="i-carbon-chat w-4 h-4 inline-block mr-1" {}
                         }
                     }
                     li {
@@ -50,18 +50,18 @@ pub fn lili(lili: Lili, poster: Profile) -> Markup {
                     }
                     li {
                         button class="bg-gray-100 text-gray-400 p-2 rounded-full cursor-pointer hover:text-blue-500 transition-colors" {
-                            div class="i-carbon-repeat w-4 h-4 inline-block mr-1" {}
+                            i class="i-carbon-repeat w-4 h-4 inline-block mr-1" {}
                         }
                     }
                     li {
                         button
                             class="bg-gray-100 text-gray-400 p-2 rounded-full cursor-pointer hover:text-blue-500 transition-colors" {
-                            div class="i-carbon-bookmark w-4 h-4 inline-block mr-1" {}
+                            i class="i-carbon-bookmark w-4 h-4 inline-block mr-1" {}
                         }
                     }
                     li {
                         button class="bg-gray-100 text-gray-400 p-2 rounded-full cursor-pointer hover:text-blue-500 transition-colors" {
-                            div class="i-carbon-share w-4 h-4 inline-block mr-1" {}
+                            i class="i-carbon-share w-4 h-4 inline-block mr-1" {}
                         }
                     }
                 }
@@ -76,7 +76,7 @@ pub fn pona_active(lili_id: String, qty: i64) -> Markup {
             hx-post=(format!("/ike/{}", lili_id))
             hx-swap="outerHTML"
             class="bg-gray-100 text-red-400 p-2 rounded-full cursor-pointer hover:text-blue-500 transition-colors" {
-            div class="w-4 h-4 inline-block mr-1" { "pona" }
+            span class="w-4 h-4 inline-block mr-1" { "pona" }
         }
         span class="text-red-400" { (qty) }
     }
@@ -88,7 +88,7 @@ pub fn pona_inactive(lili_id: String, qty: i64) -> Markup {
             hx-post=(format!("/pona/{}", lili_id))
             hx-swap="outerHTML"
             class="bg-gray-100 text-gray-400 p-2 rounded-full cursor-pointer hover:text-blue-500 transition-colors" {
-            div class="w-4 h-4 inline-block mr-1" { "pona" }
+            span class="w-4 h-4 inline-block mr-1" { "pona" }
         }
         span class="text-red-400" { (qty) }
     }
