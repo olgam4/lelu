@@ -15,7 +15,7 @@ pub fn hero(props: HeroProps) -> MaudTemplate {
         html! {
             div class="main-page" {
                 (nav(props.nav_props))
-                div id="hero" {
+                div id="hero" class="space-y-12" {
                     (toki_lili())
                     (feed(props.feed_props))
                 }

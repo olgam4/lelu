@@ -74,7 +74,6 @@ pub fn page(children: Markup, title: &str) -> MaudTemplate {
             link rel="icon" href="/static/favicon.ico" type="image/x-icon" {}
             link rel="stylesheet" href="/static/main.css" {}
 
-            script defer src="/static/hash.js" {}
 
             link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" {}
             script async type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js" {}
@@ -86,7 +85,7 @@ pub fn page(children: Markup, title: &str) -> MaudTemplate {
         }
         body hx-ext="preload" class="sitelen-pona" un-cloak {
             (children)
-            script defer { (PreEscaped("
+            script { (PreEscaped("
                 htmx.config.globalViewTransitions = true;
             ")) }
         }

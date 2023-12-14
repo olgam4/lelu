@@ -4,7 +4,7 @@ use crate::{
     domain::LoggedInSession, infra::MaudTemplate, services::lili::NewLili, ui, AppServices,
 };
 
-pub fn event(name: String, info: String) -> String {
+pub fn event(name: &str, info: &str) -> String {
     format!("{{ \"{}\": \"{}\" }}", name, info)
 }
 
@@ -33,7 +33,7 @@ pub async fn toki_lili_post(
         string: ui::lili(lili, profile),
         headers: Some(vec![(
             "HX-Trigger-After-Swap".to_string(),
-            event("notify".to_string(), "toki+lili li sitelen".to_string()),
+            event("notify", "toki+lili li sitelen"),
         )]),
     }
 }

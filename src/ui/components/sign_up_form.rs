@@ -32,5 +32,6 @@ pub fn sign_up_form() -> Markup {
                     value="sitelen" {}
             }
         }
+        script defer src="/static/hash.js" {}
     }
 }
