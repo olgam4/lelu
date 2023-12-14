@@ -5,12 +5,14 @@ edition = "2021"
 
 [dependencies]
 rocket = "0.5"
+rocket_async_compression = "0.5"
+
 maud = { git = "https://github.com/lambda-fairy/maud", branch = "main" }
 
-shuttle-rocket = "0.34.0"
-shuttle-runtime = "0.34.0"
-shuttle-secrets = "0.34.1"
-shuttle-persist = "0.34.1"
+shuttle-rocket = "0.35"
+shuttle-runtime = "0.35"
+shuttle-secrets = "0.35"
+shuttle-persist = "0.35"
 
 reqwest = { version = "0.11", features = ["json"] }
 tokio = { version = "1", features = ["full"] }

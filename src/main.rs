@@ -8,6 +8,7 @@ mod ui;
 use std::sync::Arc;
 
 use rocket::fs::FileServer;
+use rocket_async_compression::CachedCompression;
 use services::{auth::AuthService, lili::LiliService, profile::ProfileService, user::UserService};
 use shuttle_persist::PersistInstance;
 
@@ -60,7 +61,8 @@ async fn rocket(
         )
         .mount("/static", FileServer::from("static"))
         .manage(services)
-        .manage(AppState { persist });
+        .manage(AppState { persist })
+        .attach(CachedCompression::path_suffix_fairing(vec![".js".to_string(), ".css".to_string(), ".html".to_string(), ".wasm".to_string()]));
 
     Ok(app.into())
 }

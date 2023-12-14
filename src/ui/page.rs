@@ -1,6 +1,7 @@
 use maud::{html, Markup, PreEscaped};
 
 use crate::infra::MaudTemplate;
+use maud::DOCTYPE;
 
 fn htmx() -> Markup {
     html! {
@@ -62,6 +63,7 @@ fn toki_pona() -> Markup {
 
 pub fn page(children: Markup, title: &str) -> MaudTemplate {
     html! {
+        (DOCTYPE)
         head {
             meta charset="utf-8" {}
             meta http-equiv="X-UA-Compatible" content="IE=edge" {}
@@ -72,10 +74,10 @@ pub fn page(children: Markup, title: &str) -> MaudTemplate {
             link rel="icon" href="/static/favicon.ico" type="image/x-icon" {}
             link rel="stylesheet" href="/static/main.css" {}
 
-            script src="/static/hash.js" {}
+            script defer src="/static/hash.js" {}
 
             link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" {}
-            script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js" {}
+            script async type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js" {}
 
             (htmx())
             (alpine())

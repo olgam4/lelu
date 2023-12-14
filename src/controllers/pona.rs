@@ -8,7 +8,6 @@ pub async fn pona_lili_post(
     services: &State<AppServices>,
     id: String,
 ) -> MaudTemplate {
-    println!("hiii");
     let username = session.username;
     let _ = services.lili_service.pona_lili(&id, &username);
 
@@ -21,7 +20,6 @@ pub async fn ike_lili_post(
     services: &State<AppServices>,
     id: String,
 ) -> MaudTemplate {
-    println!("hiii");
     let username = session.username;
     let _ = services.lili_service.ike_lili(&id, &username);
 

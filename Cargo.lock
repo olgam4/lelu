@@ -27,6 +27,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "alloc-no-stdlib"
+version = "2.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cc7bb162ec39d46ab1ca8c77bf72e890535becd1751bb45f64c597edb4c8c6b3"
+
+[[package]]
+name = "alloc-stdlib"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "94fb8275041c72129eb51b7d0322c29b8387a0386127718b096429201a5d6ece"
+dependencies = [
+ "alloc-no-stdlib",
+]
+
+[[package]]
 name = "android-tzdata"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -64,6 +79,20 @@ name = "arrayvec"
 version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "96d30a06541fbafbc7f82ed10c06164cfbd2c401138f6addd8404629c4b16711"
+
+[[package]]
+name = "async-compression"
+version = "0.4.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc2d0cfb2a7388d34f590e76686704c494ed7aaceed62ee1ba35cbf363abc2a5"
+dependencies = [
+ "brotli",
+ "flate2",
+ "futures-core",
+ "memchr",
+ "pin-project-lite",
+ "tokio",
+]
 
 [[package]]
 name = "async-stream"
@@ -239,6 +268,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "brotli"
+version = "3.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "516074a47ef4bce09577a3b379392300159ce5b1ba2e501ff1c819950066100f"
+dependencies = [
+ "alloc-no-stdlib",
+ "alloc-stdlib",
+ "brotli-decompressor",
+]
+
+[[package]]
+name = "brotli-decompressor"
+version = "2.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4e2e4afe60d7dd600fdd3de8d0f08c2b7ec039712e3b6137ff98b7004e82de4f"
+dependencies = [
+ "alloc-no-stdlib",
+ "alloc-stdlib",
+]
+
+[[package]]
 name = "bumpalo"
 version = "3.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -343,6 +393,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ce420fe07aecd3e67c5f910618fe65e94158f6dcc0adf44e00d69ce2bdfe0fd0"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "crc32fast"
+version = "1.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b540bd8bc810d3885c6ea91e2018302f68baba2129ab3e88f32389ee9370880d"
+dependencies = [
+ "cfg-if",
 ]
 
 [[package]]
@@ -532,6 +591,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8fcfdc7a0362c9f4444381a9e697c79d435fe65b52a37466fc2c1184cee9edc6"
 
 [[package]]
+name = "flate2"
+version = "1.0.28"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "46303f565772937ffe1d394a4fac6f411c6013172fadde9dcdb1e147a086940e"
+dependencies = [
+ "crc32fast",
+ "miniz_oxide",
+]
+
+[[package]]
 name = "fnv"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -569,6 +638,7 @@ checksum = "da0290714b38af9b4a7b094b8a37086d1b4e61f2df9122c3cad2577669145335"
 dependencies = [
  "futures-channel",
  "futures-core",
+ "futures-executor",
  "futures-io",
  "futures-sink",
  "futures-task",
@@ -1004,6 +1074,7 @@ dependencies = [
  "nanoid",
  "reqwest",
  "rocket",
+ "rocket_async_compression",
  "serde",
  "serde_json",
  "shuttle-persist",
@@ -1303,6 +1374,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "opentelemetry-appender-tracing"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "12c4bd073648dae8ac45cfc81588d74b3dc5f334119ac08567ddcbfe16f2d809"
+dependencies = [
+ "once_cell",
+ "opentelemetry",
+ "opentelemetry_sdk",
+ "tracing",
+ "tracing-core",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "opentelemetry-http"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1371,6 +1456,7 @@ dependencies = [
  "ordered-float",
  "percent-encoding",
  "rand",
+ "serde_json",
  "thiserror",
  "tokio",
  "tokio-stream",
@@ -1817,6 +1903,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "rocket_async_compression"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "50253076f89fd47fa68b1d571f811f188ef90b606d82fa952326c34cd955669e"
+dependencies = [
+ "async-compression",
+ "futures",
+ "lazy_static",
+ "log",
+ "rocket",
+]
+
+[[package]]
 name = "rocket_codegen"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2061,9 +2160,9 @@ dependencies = [
 
 [[package]]
 name = "shuttle-codegen"
-version = "0.34.1"
+version = "0.35.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99f584e6f02d513abb864d5a33fb24531318080385eeac6160a9ccf2988b31bb"
+checksum = "1b99c06b8adfb88b971c2bc2662252a6ec85f4e041c7b0add64499fbdfd71b18"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
@@ -2073,9 +2172,9 @@ dependencies = [
 
 [[package]]
 name = "shuttle-common"
-version = "0.34.1"
+version = "0.35.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d0406c689a1edb0d12bd813d2b245619752ce0ad6122dad35c3f08ffccd2a40c"
+checksum = "7e1ba1b036ce303eba6982c7a9d43021d121ccba84db43c3c264f8bf22b6bdb7"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2090,6 +2189,7 @@ dependencies = [
  "hyper",
  "jsonwebtoken",
  "opentelemetry",
+ "opentelemetry-appender-tracing",
  "opentelemetry-http",
  "opentelemetry-otlp",
  "opentelemetry_sdk",
@@ -2105,6 +2205,7 @@ dependencies = [
  "tower",
  "tower-http",
  "tracing",
+ "tracing-core",
  "tracing-opentelemetry",
  "tracing-subscriber",
  "ttl_cache",
@@ -2115,9 +2216,9 @@ dependencies = [
 
 [[package]]
 name = "shuttle-persist"
-version = "0.34.1"
+version = "0.35.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3edb20e8017c60f07012a98aafb737eb5ad182428b4e5cb2221b3e6d6f06fab"
+checksum = "68bb0a3aa59e3927132fd6cc0b4011770c13d6ae0c02d2591d37d0443311560e"
 dependencies = [
  "async-trait",
  "bincode",
@@ -2128,9 +2229,9 @@ dependencies = [
 
 [[package]]
 name = "shuttle-proto"
-version = "0.34.1"
+version = "0.35.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa63942eb5dfbc6370a82611f40254b9af28f323985d3c01be400baf729c1104"
+checksum = "f86275eabcc469d6749d4dc2e091f6e120f04fde813cf7002e5dc60158ce571b"
 dependencies = [
  "futures-core",
  "prost 0.12.3",
@@ -2141,9 +2242,9 @@ dependencies = [
 
 [[package]]
 name = "shuttle-rocket"
-version = "0.34.1"
+version = "0.35.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff89701c3433fd7f1137f69e4820a8e0ed09425c0c50356b4ae50a36d9bd7fba"
+checksum = "039351d05cd141f49fe34d05383ef3cf4f9feb7a003b07febc61bf094b54c43f"
 dependencies = [
  "rocket",
  "shuttle-runtime",
@@ -2151,9 +2252,9 @@ dependencies = [
 
 [[package]]
 name = "shuttle-runtime"
-version = "0.34.1"
+version = "0.35.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4b8c49e755478841ae03351c3a4e7af99c684ce9757e5ddb0071d1ac42d33937"
+checksum = "e057c62f2f77368591117411e8de4458f6df33d0c157875c96025c2435e0811f"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2177,9 +2278,9 @@ dependencies = [
 
 [[package]]
 name = "shuttle-secrets"
-version = "0.34.1"
+version = "0.35.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0e0269b915526626e515996f77f68b433defc3be35221da87ed3eea4dce25a4"
+checksum = "3456b508f8817b2ba4e0fe106ddf6dee0732f688afa14fbb3b6f5422fd952dd4"
 dependencies = [
  "async-trait",
  "secrecy",
@@ -2189,9 +2290,9 @@ dependencies = [
 
 [[package]]
 name = "shuttle-service"
-version = "0.34.1"
+version = "0.35.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1c89dbd86fb79a791587317252daac5aa5026ed6fd73ce9f458acd30245bb13"
+checksum = "46d7b998a1137b4aa55190549b1ab71c5c834531776358599925ed23c27e4b86"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2775,6 +2876,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "tracing-serde"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc6b213177105856957181934e4920de57730fc69bf42c37ee5bb664d406d9e1"
+dependencies = [
+ "serde",
+ "tracing-core",
+]
+
+[[package]]
 name = "tracing-subscriber"
 version = "0.3.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2784,12 +2895,15 @@ dependencies = [
  "nu-ansi-term",
  "once_cell",
  "regex",
+ "serde",
+ "serde_json",
  "sharded-slab",
  "smallvec",
  "thread_local",
  "tracing",
  "tracing-core",
  "tracing-log",
+ "tracing-serde",
 ]
 
 [[package]]
