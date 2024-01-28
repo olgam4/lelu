@@ -7,7 +7,7 @@ edition = "2021"
 rocket = "0.5"
 rocket_async_compression = "0.5"
 
-maud = { git = "https://github.com/lambda-fairy/maud", branch = "main" }
+maud = "0.26"
 
 shuttle-rocket = "0.35"
 shuttle-runtime = "0.35"
